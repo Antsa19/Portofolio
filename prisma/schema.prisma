@@ -1,0 +1,44 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  techStack   String
+  liveUrl     String?
+  githubUrl   String?
+  createdAt   DateTime @default(now())
+}
+
+model Skill {
+  id       Int    @id @default(autoincrement())
+  name     String
+  category String
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Publication {
+  id         Int      @id @default(autoincrement())
+  title      String
+  conference String
+  year       Int
+  abstract   String
+  status     String   @default("Published")
+  pdfUrl     String?
+  doiUrl     String?
+  createdAt  DateTime @default(now())
+}
