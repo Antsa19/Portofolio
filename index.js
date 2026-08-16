@@ -30,16 +30,18 @@ app.use(cors({
 app.use(express.json())
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.SMTP_EMAIL,
     pass: process.env.SMTP_PASSWORD
   },
   tls: {
     rejectUnauthorized: false
-  }
+  },
+  family: 4
 })
-
 // GET all projects
 app.get('/api/projects', async (req, res) => {
   try {
@@ -73,29 +75,37 @@ app.get('/api/publications', async (req, res) => {
 // POST contact form
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body
+
+  if (!name || !name.trim() || !email || !email.trim() || !message || !message.trim()) {
+    return res.status(400).json({ error: 'Name, email, and message are required.' })
+  }
+
   try {
     const newMessage = await prisma.message.create({
-      data: { name, email, message }
+      data: { name: name.trim(), email: email.trim(), message: message.trim() }
     })
 
-    if (process.env.SMTP_EMAIL && process.env.SMTP_PASSWORD && process.env.SMTP_PASSWORD !== 'your-app-password-here') {
-      try {
-        await transporter.sendMail({
-          from: `"${name}" <${process.env.SMTP_EMAIL}>`,
-          replyTo: email,
-          to: process.env.SMTP_EMAIL,
-          subject: `New Portfolio Message from ${name}`,
-          text: `You have a new message.\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-          html: `<h3>New Message from ${name}</h3><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong></p><p>${message.replace(/\n/g, '<br>')}</p>`
-        })
-      } catch (emailError) {
-        console.error('Failed to send email:', emailError)
-      }
-    }
+    // Send HTTP response immediately to UI
+    res.status(201).json({ success: true, message: 'Message sent successfully!', id: newMessage.id })
 
-    res.status(201).json({ success: true, id: newMessage.id })
+    // Send email asynchronously in background
+    if (process.env.SMTP_EMAIL && process.env.SMTP_PASSWORD && process.env.SMTP_PASSWORD !== 'your-app-password-here') {
+      transporter.sendMail({
+        from: `"${name.trim()}" <${process.env.SMTP_EMAIL}>`,
+        replyTo: email.trim(),
+        to: process.env.SMTP_EMAIL,
+        subject: `New Portfolio Message from ${name.trim()}`,
+        text: `You have a new message.\n\nName: ${name.trim()}\nEmail: ${email.trim()}\n\nMessage:\n${message.trim()}`,
+        html: `<h3>New Message from ${name.trim()}</h3><p><strong>Email:</strong> ${email.trim()}</p><p><strong>Message:</strong></p><p>${message.trim().replace(/\n/g, '<br>')}</p>`
+      }).catch(emailError => {
+        console.error('Failed to send email in background:', emailError)
+      })
+    }
   } catch (error) {
-    res.status(500).json({ error: 'Failed to save message' })
+    console.error('Failed to save message:', error)
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Failed to save message' })
+    }
   }
 })
 

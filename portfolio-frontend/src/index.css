@@ -286,3 +286,25 @@ html {
   color: var(--accent-hover);
   transform: scale(1.05);
 }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.required-star {
+  color: var(--accent-tertiary);
+  margin-left: 4px;
+}

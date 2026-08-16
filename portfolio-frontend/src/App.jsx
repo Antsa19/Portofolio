@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
-import { motion } from 'framer-motion'
-import { GitBranch, ExternalLink, Mail, User, Send, Code2, Terminal, Database, Wrench, BookOpen, Phone } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { GitBranch, ExternalLink, Mail, User, Send, Code2, Terminal, Database, Wrench, BookOpen, Phone, CheckCircle, AlertCircle, Loader2, X } from 'lucide-react'
 
 const LinkedinIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -20,6 +20,8 @@ export default function App() {
   const [publications, setPublications] = useState([])
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [notification, setNotification] = useState(null)
   const [typedName, setTypedName] = useState('')
   const [showCursor, setShowCursor] = useState(true)
 
@@ -45,12 +47,56 @@ export default function App() {
     axios.get(`${API}/api/publications`).then(r => setPublications(r.data))
   }, [])
 
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null)
+      }, 6000)
+      return () => clearTimeout(timer)
+    }
+  }, [notification])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await axios.post(`${API}/api/contact`, form)
-    setSent(true)
-    setForm({ name: '', email: '', message: '' })
-    setTimeout(() => setSent(false), 5000)
+
+    const nameVal = form.name.trim()
+    const emailVal = form.email.trim()
+    const messageVal = form.message.trim()
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (!nameVal) {
+      setNotification({ type: 'error', message: 'Name is required. Please enter your name.' })
+      return
+    }
+    if (!emailVal || !emailRegex.test(emailVal)) {
+      setNotification({ type: 'error', message: 'Please enter a valid email address.' })
+      return
+    }
+    if (!messageVal) {
+      setNotification({ type: 'error', message: 'Message is required. Please write your message.' })
+      return
+    }
+
+    setLoading(true)
+    setNotification(null)
+
+    try {
+      const res = await axios.post(`${API}/api/contact`, { name: nameVal, email: emailVal, message: messageVal })
+      setSent(true)
+      setNotification({
+        type: 'success',
+        message: res.data?.message || 'Message sent successfully! I will get back to you soon.'
+      })
+      setForm({ name: '', email: '', message: '' })
+    } catch (err) {
+      console.error(err)
+      setNotification({
+        type: 'error',
+        message: err.response?.data?.error || 'Failed to send message. Please try again.'
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const groupedSkills = skills.reduce((acc, skill) => {
@@ -82,6 +128,48 @@ export default function App() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+
+      {/* FLOATING TOAST NOTIFICATION */}
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, y: -30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            style={{
+              position: 'fixed',
+              top: '24px',
+              right: '24px',
+              zIndex: 10000,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+              padding: '18px 24px',
+              borderRadius: '16px',
+              background: '#0d131f',
+              border: notification.type === 'success' ? '1px solid #10b981' : '1px solid #f43f5e',
+              boxShadow: notification.type === 'success' ? '0 15px 35px rgba(16, 185, 129, 0.35)' : '0 15px 35px rgba(244, 63, 94, 0.35)',
+              color: '#ffffff',
+              maxWidth: '460px',
+              width: 'calc(100% - 48px)'
+            }}
+          >
+            {notification.type === 'success' ? (
+              <CheckCircle size={26} style={{ color: '#10b981', flexShrink: 0 }} />
+            ) : (
+              <AlertCircle size={26} style={{ color: '#f43f5e', flexShrink: 0 }} />
+            )}
+            <span style={{ fontSize: '1rem', fontWeight: 500, lineHeight: 1.4 }}>{notification.message}</span>
+            <button
+              onClick={() => setNotification(null)}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', marginLeft: 'auto', padding: '4px', display: 'flex', alignItems: 'center' }}
+            >
+              <X size={20} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* NAVBAR */}
       <nav className="glass-nav" style={{ position: 'fixed', top: 0, width: '100%', zIndex: 100, padding: '0 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '72px', boxSizing: 'border-box' }}>
@@ -403,27 +491,88 @@ export default function App() {
 
               <motion.div variants={fadeInUp}>
                 {sent ? (
-                  <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '16px', padding: '32px', textAlign: 'center' }}>
-                    <div style={{ color: '#10b981', marginBottom: '16px' }}><Send size={48} style={{ margin: '0 auto' }} /></div>
-                    <h3 style={{ color: 'var(--text-primary)', margin: '0 0 8px', fontSize: '1.3rem' }}>Message Sent!</h3>
-                    <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Thank you for reaching out. I'll get back to you soon.</p>
+                  <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '24px', padding: '40px 32px', textAlign: 'center' }}>
+                    <div style={{ color: '#10b981', marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+                      <CheckCircle size={56} />
+                    </div>
+                    <h3 style={{ color: 'var(--text-primary)', margin: '0 0 8px', fontSize: '1.4rem' }}>Message Sent Successfully!</h3>
+                    <p style={{ color: 'var(--text-secondary)', margin: '0 0 24px', fontSize: '1rem' }}>Thank you for reaching out. I have received your email and will respond to you soon.</p>
+                    <button
+                      onClick={() => setSent(false)}
+                      className="btn-outline"
+                      style={{ padding: '10px 24px', fontSize: '0.9rem' }}
+                    >
+                      Send Another Message
+                    </button>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <form noValidate onSubmit={handleSubmit} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    {notification && (
+                      <div style={{
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        fontSize: '0.9rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        background: notification.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)',
+                        border: notification.type === 'success' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(244, 63, 94, 0.3)',
+                        color: notification.type === 'success' ? '#10b981' : '#f43f5e'
+                      }}>
+                        {notification.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
+                        <span>{notification.message}</span>
+                      </div>
+                    )}
                     <div>
-                      <input required placeholder="Your Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="form-input" />
+                      <label className="form-label">Name <span className="required-star">*</span></label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Enter your full name"
+                        value={form.name}
+                        onChange={e => setForm({ ...form, name: e.target.value })}
+                        className="form-input"
+                        disabled={loading}
+                      />
                     </div>
                     <div>
-                      <input required type="email" placeholder="Your Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="form-input" />
+                      <label className="form-label">Email <span className="required-star">*</span></label>
+                      <input
+                        required
+                        type="email"
+                        placeholder="Enter your email address"
+                        value={form.email}
+                        onChange={e => setForm({ ...form, email: e.target.value })}
+                        className="form-input"
+                        disabled={loading}
+                      />
                     </div>
                     <div>
-                      <textarea required placeholder="Your Message" value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} rows={5} className="form-input" />
+                      <label className="form-label">Message <span className="required-star">*</span></label>
+                      <textarea
+                        required
+                        placeholder="Write your message here..."
+                        value={form.message}
+                        onChange={e => setForm({ ...form, message: e.target.value })}
+                        rows={5}
+                        className="form-input"
+                        disabled={loading}
+                      />
                     </div>
                     <button
                       type="submit"
+                      disabled={loading}
                       className="btn-primary"
-                      style={{ justifyContent: 'center', width: '100%' }}>
-                      Send Message <Send size={18} />
+                      style={{ justifyContent: 'center', width: '100%', opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+                      {loading ? (
+                        <>
+                          Sending... <Loader2 size={18} className="spinner" />
+                        </>
+                      ) : (
+                        <>
+                          Send Message <Send size={18} />
+                        </>
+                      )}
                     </button>
                   </form>
                 )}
