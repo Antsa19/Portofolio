@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-const nodemailer = require('nodemailer')
+const { Resend } = require('resend')
 const { PrismaClient } = require('@prisma/client')
 const { PrismaPg } = require('@prisma/adapter-pg')
 const { Pool } = require('pg')
@@ -29,19 +29,7 @@ app.use(cors({
 }))
 app.use(express.json())
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_EMAIL,
-    pass: process.env.SMTP_PASSWORD
-  },
-  tls: {
-    rejectUnauthorized: false
-  },
-  family: 4
-})
+const resend = new Resend(process.env.RESEND_API_KEY)
 // GET all projects
 app.get('/api/projects', async (req, res) => {
   try {
@@ -89,11 +77,11 @@ app.post('/api/contact', async (req, res) => {
     res.status(201).json({ success: true, message: 'Message sent successfully!', id: newMessage.id })
 
     // Send email asynchronously in background
-    if (process.env.SMTP_EMAIL && process.env.SMTP_PASSWORD && process.env.SMTP_PASSWORD !== 'your-app-password-here') {
-      transporter.sendMail({
-        from: `"${name.trim()}" <${process.env.SMTP_EMAIL}>`,
+    if (process.env.RESEND_API_KEY) {
+      resend.emails.send({
+        from: 'Portfolio Contact <onboarding@resend.dev>',
+        to: 'antsanotiavinaantsa@gmail.com',
         replyTo: email.trim(),
-        to: process.env.SMTP_EMAIL,
         subject: `New Portfolio Message from ${name.trim()}`,
         text: `You have a new message.\n\nName: ${name.trim()}\nEmail: ${email.trim()}\n\nMessage:\n${message.trim()}`,
         html: `<h3>New Message from ${name.trim()}</h3><p><strong>Email:</strong> ${email.trim()}</p><p><strong>Message:</strong></p><p>${message.trim().replace(/\n/g, '<br>')}</p>`
