@@ -11,7 +11,7 @@ const LinkedinIcon = ({ size = 20 }) => (
   </svg>
 )
 
-const API = 'http://localhost:3000'
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 const FULL_NAME = 'Antsa Notiavina Rasolofonimaro'
 
 export default function App() {
@@ -121,7 +121,7 @@ export default function App() {
             animate="visible"
             variants={staggerContainer}
             style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '48px', zIndex: 1, flexWrap: 'wrap-reverse' }}>
-            
+
             <div style={{ flex: '1 1 500px', maxWidth: '650px' }}>
               <motion.p variants={fadeInUp} style={{ color: 'var(--accent-hover)', fontWeight: 700, marginBottom: '16px', fontSize: '1.1rem', letterSpacing: '3px', textTransform: 'uppercase' }}>Hello, I am</motion.p>
               <motion.h1 variants={fadeInUp} className="brand-font" style={{ fontSize: '4.5rem', fontWeight: 800, margin: '0 0 16px', lineHeight: 1.1, color: 'var(--text-primary)', minHeight: '9.5rem' }}>
