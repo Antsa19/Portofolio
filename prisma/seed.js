@@ -19,14 +19,14 @@ async function main() {
         description: 'Full-stack library management system with role-based access for Admin, Staff, and Users. Features book management, borrowing system, and user administration.',
         techStack: 'HTML,CSS,JavaScript,PHP,MySQL',
         liveUrl: null,
-        githubUrl: 'https://github.com/urolaki1909/My-fullstack-project',
+        githubUrl: 'https://github.com/Antsa19/My-fullstack-project.git',
       },
       {
         title: 'Culinary Craft',
         description: 'A visually rich frontend website showcasing culinary arts and recipes. Built with a focus on clean UI and smooth user experience.',
         techStack: 'HTML,CSS,JavaScript',
         liveUrl: null,
-        githubUrl: 'https://github.com/urolaki1909/My-First-HTML-project-',
+        githubUrl: 'https://github.com/Antsa19/My-First-HTML-project-.git',
       },
     ],
   })

@@ -1,7 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { GitBranch, ExternalLink, Mail, User, Send, Code2, Terminal, Database, Wrench, BookOpen } from 'lucide-react'
+import { GitBranch, ExternalLink, Mail, User, Send, Code2, Terminal, Database, Wrench, BookOpen, Phone } from 'lucide-react'
+
+const LinkedinIcon = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect x="2" y="9" width="4" height="12" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+)
 
 const API = 'http://localhost:3000'
 const FULL_NAME = 'Antsa Notiavina Rasolofonimaro'
@@ -112,27 +120,69 @@ export default function App() {
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
-            style={{ maxWidth: '800px', zIndex: 1 }}>
-            <motion.p variants={fadeInUp} style={{ color: 'var(--accent-hover)', fontWeight: 700, marginBottom: '16px', fontSize: '1.1rem', letterSpacing: '3px', textTransform: 'uppercase' }}>Hello, I am</motion.p>
-            <motion.h1 variants={fadeInUp} className="brand-font" style={{ fontSize: '4.8rem', fontWeight: 800, margin: '0 0 16px', lineHeight: 1.1, color: 'var(--text-primary)', minHeight: '10.5rem' }}>
-              {typedName.length <= 16
-                ? <>{typedName}<span className={showCursor ? 'typewriter-cursor' : ''} /></>
-                : <>Antsa Notiavina <br /><span className="gradient-text">{typedName.slice(16)}</span><span className={showCursor ? 'typewriter-cursor' : ''} /></>
-              }
-            </motion.h1>
-            <motion.h2 variants={fadeInUp} style={{ fontSize: '2rem', color: 'var(--text-secondary)', margin: '0 0 32px', fontWeight: 500 }}>Software Engineer</motion.h2>
-            <motion.p variants={fadeInUp} style={{ maxWidth: '600px', lineHeight: 1.8, color: 'var(--text-muted)', fontSize: '1.15rem', marginBottom: '48px' }}>
-              I build full-stack web applications using React, Node.js, Express, and PostgreSQL.
-              Currently looking for internship or junior developer opportunities to create impactful solutions.
-            </motion.p>
-            <motion.div variants={fadeInUp} style={{ display: 'flex', gap: '20px' }}>
-              <a href="#projects" className="btn-primary">
-                View Projects
-              </a>
-              <a href="#contact" className="btn-outline">
-                Contact Me
-              </a>
+            style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '48px', zIndex: 1, flexWrap: 'wrap-reverse' }}>
+            
+            <div style={{ flex: '1 1 500px', maxWidth: '650px' }}>
+              <motion.p variants={fadeInUp} style={{ color: 'var(--accent-hover)', fontWeight: 700, marginBottom: '16px', fontSize: '1.1rem', letterSpacing: '3px', textTransform: 'uppercase' }}>Hello, I am</motion.p>
+              <motion.h1 variants={fadeInUp} className="brand-font" style={{ fontSize: '4.5rem', fontWeight: 800, margin: '0 0 16px', lineHeight: 1.1, color: 'var(--text-primary)', minHeight: '9.5rem' }}>
+                {typedName.length <= 16
+                  ? <>{typedName}<span className={showCursor ? 'typewriter-cursor' : ''} /></>
+                  : <>Antsa Notiavina <br /><span className="gradient-text">{typedName.slice(16)}</span><span className={showCursor ? 'typewriter-cursor' : ''} /></>
+                }
+              </motion.h1>
+              <motion.h2 variants={fadeInUp} style={{ fontSize: '2rem', color: 'var(--text-secondary)', margin: '0 0 32px', fontWeight: 500 }}>Software Engineer</motion.h2>
+              <motion.p variants={fadeInUp} style={{ maxWidth: '600px', lineHeight: 1.8, color: 'var(--text-muted)', fontSize: '1.15rem', marginBottom: '48px' }}>
+                I build full-stack web applications using React, Node.js, Express, and PostgreSQL.
+                Currently looking for internship or junior developer opportunities to create impactful solutions.
+              </motion.p>
+              <motion.div variants={fadeInUp} style={{ display: 'flex', gap: '20px' }}>
+                <a href="#projects" className="btn-primary">
+                  View Projects
+                </a>
+                <a href="#contact" className="btn-outline">
+                  Contact Me
+                </a>
+              </motion.div>
+            </div>
+
+            <motion.div
+              variants={fadeInUp}
+              whileHover={{ scale: 1.03, rotate: 1 }}
+              transition={{ duration: 0.3 }}
+              style={{ flex: '0 0 340px', position: 'relative', margin: '0 auto' }}>
+              <div style={{
+                position: 'absolute',
+                inset: '-12px',
+                borderRadius: '32px',
+                background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-hover), #3b82f6)',
+                opacity: 0.35,
+                filter: 'blur(24px)',
+                zIndex: 0
+              }}></div>
+              <div className="glass-card" style={{
+                position: 'relative',
+                zIndex: 1,
+                padding: '12px',
+                borderRadius: '28px',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                background: 'rgba(15, 23, 42, 0.6)',
+                backdropFilter: 'blur(16px)',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
+              }}>
+                <img
+                  src="/profile.png"
+                  alt="Antsa Notiavina Rasolofonimaro"
+                  style={{
+                    width: '100%',
+                    height: '380px',
+                    objectFit: 'cover',
+                    borderRadius: '20px',
+                    display: 'block'
+                  }}
+                />
+              </div>
             </motion.div>
+
           </motion.div>
         </section>
 
@@ -157,7 +207,7 @@ export default function App() {
                   ['Location', 'Indonesia'],
                   ['Focus', 'Software Engineer'],
                   ['Available', 'Internship / Junior Role'],
-                  ['GitHub', '@urolaki1909'],
+                  ['GitHub', '@Antsa19'],
                 ].map(([k, v]) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid var(--border-color)' }}>
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{k}</span>
@@ -318,13 +368,35 @@ export default function App() {
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '1.1rem', lineHeight: 1.8 }}>
                   I'm currently looking for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(139, 92, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)' }}>
-                    <Mail size={20} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(139, 92, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', flexShrink: 0 }}>
+                      <Mail size={20} />
+                    </div>
+                    <div>
+                      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Email</p>
+                      <a href="mailto:antsanotiavinaantsa@gmail.com" style={{ color: 'var(--text-primary)', fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }}>antsanotiavinaantsa@gmail.com</a>
+                    </div>
                   </div>
-                  <div>
-                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Email</p>
-                    <p style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 500 }}>antsanotiavinaantsa@gmail.com</p>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(139, 92, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', flexShrink: 0 }}>
+                      <Phone size={20} />
+                    </div>
+                    <div>
+                      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Phone</p>
+                      <a href="tel:+6282230708963" style={{ color: 'var(--text-primary)', fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }}>+62 822 3070 8963</a>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(139, 92, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', flexShrink: 0 }}>
+                      <LinkedinIcon size={20} />
+                    </div>
+                    <div>
+                      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>LinkedIn</p>
+                      <a href="https://www.linkedin.com/in/antsa-notiavina-b4a167308/" target="_blank" rel="noreferrer" style={{ color: 'var(--text-primary)', fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }}>Antsa Notiavina</a>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -366,8 +438,9 @@ export default function App() {
       <footer style={{ background: '#070a12', borderTop: '1px solid var(--border-color)', color: 'var(--text-muted)', textAlign: 'center', padding: '32px', fontSize: '0.95rem', marginTop: 'auto' }}>
         <p style={{ margin: '0 0 16px 0', fontStyle: 'italic', color: 'var(--text-secondary)' }}>Philippians 4:13 " I can do all things through Christ who strengthens me"</p>
         <p style={{ margin: 0 }}>Built with ❤️ by <span style={{ color: 'var(--accent-primary)', fontWeight: 500 }}>Antsa Notiavina Rasolofonimaro</span></p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
-          <motion.a href="https://github.com/urolaki1909" target="_blank" rel="noreferrer" whileHover={{ color: 'var(--accent-primary)', y: -2 }} style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }}><GitBranch size={20} /></motion.a>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '16px' }}>
+          <motion.a href="https://github.com/Antsa19" target="_blank" rel="noreferrer" whileHover={{ color: 'var(--accent-primary)', y: -2 }} style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }}><GitBranch size={20} /></motion.a>
+          <motion.a href="https://www.linkedin.com/in/antsa-notiavina-b4a167308/" target="_blank" rel="noreferrer" whileHover={{ color: 'var(--accent-primary)', y: -2 }} style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }}><LinkedinIcon size={20} /></motion.a>
         </div>
       </footer>
 
