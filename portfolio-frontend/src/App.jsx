@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
-import { GitBranch, ExternalLink, Mail, User, Send, Code2, Terminal, Database, Wrench, BookOpen, Phone, CheckCircle, AlertCircle, Loader2, X } from 'lucide-react'
+import { GitBranch, ExternalLink, Mail, User, Send, Code2, Terminal, Database, Wrench, BookOpen, Phone, CheckCircle, AlertCircle, Loader2, X, Menu } from 'lucide-react'
 
 const LinkedinIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -24,6 +24,7 @@ export default function App() {
   const [notification, setNotification] = useState(null)
   const [typedName, setTypedName] = useState('')
   const [showCursor, setShowCursor] = useState(true)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Typewriter effect for the name
   useEffect(() => {
@@ -180,10 +181,12 @@ export default function App() {
           style={{ fontWeight: 800, fontSize: '1.4rem', letterSpacing: '1px' }}>
           Antsa.dev
         </motion.span>
+        
+        {/* Desktop Nav Links */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          style={{ display: 'flex', gap: '40px' }}>
+          className="nav-desktop">
           {['About', 'Skills', 'Publications', 'Projects', 'Contact'].map(item => (
             <motion.a
               key={item}
@@ -194,13 +197,51 @@ export default function App() {
             </motion.a>
           ))}
         </motion.div>
+
+        {/* Mobile / iPad Hamburger Toggle */}
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="nav-mobile-toggle"
+          aria-label="Toggle navigation menu">
+          {isMobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+        </motion.button>
       </nav>
+
+      {/* MOBILE & IPAD NAVIGATION OVERLAY MENU DRAWER */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="mobile-menu-overlay">
+            <div className="mobile-nav-links">
+              {['About', 'Skills', 'Publications', 'Projects', 'Contact'].map((item, idx) => (
+                <motion.a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 + 0.1 }}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="mobile-nav-link">
+                  <span>{item}</span>
+                  <span style={{ fontSize: '1.1rem', color: 'var(--accent-primary)' }}>&rarr;</span>
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* MAIN CONTENT wrapper to ensure footer is pushed down */}
       <main style={{ flex: 1 }}>
 
         {/* HERO */}
-        <section style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 48px', position: 'relative', overflow: 'hidden' }}>
+        <section className="hero-section">
           <div className="float-1" style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none', filter: 'blur(80px)' }}></div>
           <div className="float-2" style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none', filter: 'blur(80px)' }}></div>
 
@@ -208,22 +249,22 @@ export default function App() {
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
-            style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '48px', zIndex: 1, flexWrap: 'wrap-reverse' }}>
+            className="hero-container">
 
-            <div style={{ flex: '1 1 500px', maxWidth: '650px' }}>
+            <div className="hero-content">
               <motion.p variants={fadeInUp} style={{ color: 'var(--accent-hover)', fontWeight: 700, marginBottom: '16px', fontSize: '1.1rem', letterSpacing: '3px', textTransform: 'uppercase' }}>Hello, I am</motion.p>
-              <motion.h1 variants={fadeInUp} className="brand-font" style={{ fontSize: '4.5rem', fontWeight: 800, margin: '0 0 16px', lineHeight: 1.1, color: 'var(--text-primary)', minHeight: '9.5rem' }}>
+              <motion.h1 variants={fadeInUp} className="brand-font hero-title">
                 {typedName.length <= 16
                   ? <>{typedName}<span className={showCursor ? 'typewriter-cursor' : ''} /></>
                   : <>Antsa Notiavina <br /><span className="gradient-text">{typedName.slice(16)}</span><span className={showCursor ? 'typewriter-cursor' : ''} /></>
                 }
               </motion.h1>
-              <motion.h2 variants={fadeInUp} style={{ fontSize: '2rem', color: 'var(--text-secondary)', margin: '0 0 32px', fontWeight: 500 }}>Software Engineer</motion.h2>
-              <motion.p variants={fadeInUp} style={{ maxWidth: '600px', lineHeight: 1.8, color: 'var(--text-muted)', fontSize: '1.15rem', marginBottom: '48px' }}>
+              <motion.h2 variants={fadeInUp} className="hero-subtitle">Software Engineer</motion.h2>
+              <motion.p variants={fadeInUp} className="hero-description">
                 I build full-stack web applications using React, Node.js, Express, and PostgreSQL.
                 Currently looking for internship or junior developer opportunities to create impactful solutions.
               </motion.p>
-              <motion.div variants={fadeInUp} style={{ display: 'flex', gap: '20px' }}>
+              <motion.div variants={fadeInUp} className="hero-buttons">
                 <a href="#projects" className="btn-primary">
                   View Projects
                 </a>
@@ -237,7 +278,7 @@ export default function App() {
               variants={fadeInUp}
               whileHover={{ scale: 1.03, rotate: 1 }}
               transition={{ duration: 0.3 }}
-              style={{ flex: '0 0 340px', position: 'relative', margin: '0 auto' }}>
+              className="hero-image-wrapper">
               <div style={{
                 position: 'absolute',
                 inset: '-12px',
@@ -275,11 +316,11 @@ export default function App() {
         </section>
 
         {/* ABOUT */}
-        <section id="about" style={sectionStyle}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} style={containerStyle}>
-            <motion.p variants={fadeInUp} style={labelStyle}>WHO I AM</motion.p>
-            <motion.h2 variants={fadeInUp} className="brand-font" style={headingStyle}>About Me</motion.h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '64px', alignItems: 'center' }}>
+        <section id="about" className="section-padding">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="section-container">
+            <motion.p variants={fadeInUp} className="section-label">WHO I AM</motion.p>
+            <motion.h2 variants={fadeInUp} className="brand-font section-heading">About Me</motion.h2>
+            <div className="about-grid">
               <motion.p variants={fadeInUp} style={{ lineHeight: 1.9, color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
                 I'm a passionate developer from Madagascar currently mastering full-stack JavaScript.
                 I have experience building web applications with PHP and MySQL, and I'm now expanding
@@ -308,11 +349,11 @@ export default function App() {
         </section>
 
         {/* SKILLS */}
-        <section id="skills" style={{ ...sectionStyle, background: 'var(--bg-secondary)' }}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} style={containerStyle}>
-            <motion.p variants={fadeInUp} style={labelStyle}>WHAT I KNOW</motion.p>
-            <motion.h2 variants={fadeInUp} className="brand-font" style={headingStyle}>Skills</motion.h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
+        <section id="skills" className="section-padding" style={{ background: 'var(--bg-secondary)' }}>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="section-container">
+            <motion.p variants={fadeInUp} className="section-label">WHAT I KNOW</motion.p>
+            <motion.h2 variants={fadeInUp} className="brand-font section-heading">Skills</motion.h2>
+            <div className="skills-grid">
               {Object.entries(groupedSkills).map(([category, items]) => (
                 <motion.div key={category} variants={fadeInUp} className="glass-card skills-card">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
@@ -334,10 +375,10 @@ export default function App() {
 
         {/* PUBLICATIONS */}
         {publications.length > 0 && (
-          <section id="publications" style={{ ...sectionStyle, background: 'var(--bg-primary)' }}>
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} style={containerStyle}>
-              <motion.p variants={fadeInUp} style={labelStyle}>MY RESEARCH</motion.p>
-              <motion.h2 variants={fadeInUp} className="brand-font" style={headingStyle}>Publications</motion.h2>
+          <section id="publications" className="section-padding" style={{ background: 'var(--bg-primary)' }}>
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="section-container">
+              <motion.p variants={fadeInUp} className="section-label">MY RESEARCH</motion.p>
+              <motion.h2 variants={fadeInUp} className="brand-font section-heading">Publications</motion.h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                 {publications.map(pub => (
                   <motion.div
@@ -405,11 +446,11 @@ export default function App() {
         )}
 
         {/* PROJECTS */}
-        <section id="projects" style={sectionStyle}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} style={containerStyle}>
-            <motion.p variants={fadeInUp} style={labelStyle}>WHAT I'VE BUILT</motion.p>
-            <motion.h2 variants={fadeInUp} className="brand-font" style={headingStyle}>Featured Projects</motion.h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '32px' }}>
+        <section id="projects" className="section-padding">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="section-container">
+            <motion.p variants={fadeInUp} className="section-label">WHAT I'VE BUILT</motion.p>
+            <motion.h2 variants={fadeInUp} className="brand-font section-heading">Featured Projects</motion.h2>
+            <div className="projects-grid">
               {projects.map(project => (
                 <motion.div
                   key={project.id}
@@ -447,11 +488,11 @@ export default function App() {
         </section>
 
         {/* CONTACT */}
-        <section id="contact" style={{ ...sectionStyle, background: 'var(--bg-secondary)', paddingBottom: '120px' }}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} style={containerStyle}>
-            <motion.p variants={fadeInUp} style={labelStyle}>GET IN TOUCH</motion.p>
-            <motion.h2 variants={fadeInUp} className="brand-font" style={headingStyle}>Contact Me</motion.h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '48px' }}>
+        <section id="contact" className="section-padding" style={{ background: 'var(--bg-secondary)', paddingBottom: '120px' }}>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="section-container">
+            <motion.p variants={fadeInUp} className="section-label">GET IN TOUCH</motion.p>
+            <motion.h2 variants={fadeInUp} className="brand-font section-heading">Contact Me</motion.h2>
+            <div className="contact-grid">
               <motion.div variants={fadeInUp}>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '1.1rem', lineHeight: 1.8 }}>
                   I'm currently looking for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
@@ -596,8 +637,3 @@ export default function App() {
     </div>
   )
 }
-
-const sectionStyle = { padding: '140px 0' }
-const containerStyle = { maxWidth: '1100px', margin: '0 auto', padding: '0 48px' }
-const labelStyle = { color: 'var(--accent-primary)', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '4px', marginBottom: '16px', display: 'block' }
-const headingStyle = { fontSize: '2.8rem', fontWeight: 800, marginBottom: '64px', color: 'var(--text-primary)' }
