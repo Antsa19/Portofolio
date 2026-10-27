@@ -79,8 +79,11 @@ export default function App() {
     setNotification(null)
 
     try {
-      const res = await axios.post(`${API}/api/contact`, { name: nameVal, email: emailVal, message: messageVal })
-      setSent(true)
+      const res = await axios.post(
+        'https://formspree.io/f/xljjjvpg',
+        { name: nameVal, email: emailVal, message: messageVal },
+        { headers: { Accept: 'application/json' } }
+      )
       setNotification({
         type: 'success',
         message: res.data?.message || 'Message sent successfully! I will get back to you soon.'
