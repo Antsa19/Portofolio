@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
+import { projects as projectsData, skills as skillsData, publications as publicationsData } from './data'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GitBranch, ExternalLink, Mail, User, Send, Code2, Terminal, Database, Wrench, BookOpen, Phone, CheckCircle, AlertCircle, Loader2, X, Menu } from 'lucide-react'
 
@@ -15,9 +16,9 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 const FULL_NAME = 'Antsa Notiavina Rasolofonimaro'
 
 export default function App() {
-  const [projects, setProjects] = useState([])
-  const [skills, setSkills] = useState([])
-  const [publications, setPublications] = useState([])
+  const [projects] = useState(projectsData)
+  const [skills] = useState(skillsData)
+  const [publications] = useState(publicationsData)
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -42,11 +43,7 @@ export default function App() {
     return () => clearInterval(timer)
   }, [])
 
-  useEffect(() => {
-    axios.get(`${API}/api/projects`).then(r => setProjects(r.data))
-    axios.get(`${API}/api/skills`).then(r => setSkills(r.data))
-    axios.get(`${API}/api/publications`).then(r => setPublications(r.data))
-  }, [])
+
 
   useEffect(() => {
     if (notification) {
@@ -181,7 +178,7 @@ export default function App() {
           style={{ fontWeight: 800, fontSize: '1.4rem', letterSpacing: '1px' }}>
           Antsa.dev
         </motion.span>
-        
+
         {/* Desktop Nav Links */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
